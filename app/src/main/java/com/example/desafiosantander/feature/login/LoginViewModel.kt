@@ -8,8 +8,10 @@ import com.example.desafiosantander.rule.BaseViewModel
 import com.example.desafiosantander.data.model.basic.UserAccount
 import com.example.desafiosantander.data.model.basic.ViewModelState
 import com.example.desafiosantander.data.model.request.LoginRequest
+import com.example.desafiosantander.data.model.response.Error
 import com.example.desafiosantander.data.repository.hawk.HawkContract
 import com.example.desafiosantander.data.repository.login.LoginContract
+import com.example.desafiosantander.utils.Constants.CODE_ERROR_DEFAULT
 import com.example.desafiosantander.utils.Constants.KEY_SAVE_USER
 import com.example.desafiosantander.utils.Constants.KEY_SAVE_USER_EMAIL
 
@@ -24,7 +26,7 @@ class LoginViewModel(
     fun login(emailCpf: String, password: String) {
         loginLiveData.postValue(ViewModelState(status = ViewModelState.Status.LOADING))
 
-        disposables.add(loginContract.login(LoginRequest(emailCpf, password)).subscribe { base ->
+        disposables.add(loginContract.login(LoginRequest(emailCpf, password)).subscribe({ base ->
             when (base.error?.message) {
                 null -> {
                     hawkContract.save(KEY_SAVE_USER, base.userAccount)
@@ -44,7 +46,14 @@ class LoginViewModel(
                     )
                 )
             }
-        })
+        }, {
+            loginLiveData.postValue(
+                ViewModelState(
+                    status = ViewModelState.Status.ERROR,
+                    errors = it.message?.let { message -> Error(CODE_ERROR_DEFAULT, message) }
+                )
+            )
+        }))
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

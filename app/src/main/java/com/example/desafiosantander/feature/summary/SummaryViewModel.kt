@@ -8,8 +8,10 @@ import com.example.desafiosantander.rule.BaseViewModel
 import com.example.desafiosantander.data.model.basic.Statement
 import com.example.desafiosantander.data.model.basic.UserAccount
 import com.example.desafiosantander.data.model.basic.ViewModelState
+import com.example.desafiosantander.data.model.response.Error
 import com.example.desafiosantander.data.repository.hawk.HawkContract
 import com.example.desafiosantander.data.repository.summary.SummaryContract
+import com.example.desafiosantander.utils.Constants.CODE_ERROR_DEFAULT
 import com.example.desafiosantander.utils.Constants.KEY_SAVE_USER
 
 class SummaryViewModel(
@@ -17,7 +19,8 @@ class SummaryViewModel(
     private val hawkContract: HawkContract
 ) : BaseViewModel() {
 
-    private val statementLiveData: MutableLiveData<ViewModelState<List<Statement>>> = MutableLiveData()
+    private val statementLiveData: MutableLiveData<ViewModelState<List<Statement>>> =
+        MutableLiveData()
     private val userSaved: MutableLiveData<UserAccount> = MutableLiveData()
     private val logout: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -36,7 +39,7 @@ class SummaryViewModel(
     fun statementList(idUser: Int) {
         statementLiveData.postValue(ViewModelState(ViewModelState.Status.LOADING))
 
-        disposables.add(summaryContract.statementList(idUser).subscribe { response ->
+        disposables.add(summaryContract.statementList(idUser).subscribe({ response ->
             when (response.error?.message) {
                 null -> {
                     statementLiveData.postValue(
@@ -55,7 +58,14 @@ class SummaryViewModel(
                     )
                 }
             }
-        })
+        }, {
+            statementLiveData.postValue(
+                ViewModelState(
+                    status = ViewModelState.Status.ERROR,
+                    errors = it.message?.let { message -> Error(CODE_ERROR_DEFAULT, message) }
+                )
+            )
+        }))
     }
 
     fun logout() {

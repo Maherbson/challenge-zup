@@ -10,4 +10,6 @@ object Constants {
 
     const val FORMAT_DATE_SERVER = "yyyy-MM-dd"
     const val FORMAT_DATE_PT_BR = "dd/MM/yyyy"
+
+    const val CODE_ERROR_DEFAULT: Long = -1
 }
