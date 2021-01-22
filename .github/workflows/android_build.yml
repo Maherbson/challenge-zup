@@ -16,7 +16,7 @@ jobs:
           java-version: 1.8
 
       - name: Run Tests
-        run: ./DesafioSantander/gradlew test
+        run: ./gradlew test
 
       - name: Build Project
-        run: ./DesafioSantander/gradlew assemble
+        run: ./gradlew assemble
