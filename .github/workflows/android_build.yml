@@ -20,15 +20,15 @@ jobs:
         
       - name: Build with Gradle
         run: ./gradlew build
-      
-      - name: Upload APK
-        uses: actions/upload-artifact@v2.2.2
-        with:
-          name: challenge-zup
-          path: app/build/outputs/apk/debug/challeng-zup.apk    
         
       - name: Run Tests
         run: ./gradlew test
 
       - name: Build Project
         run: ./gradlew assemble
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: challenge-zup
+          path: app/build/outputs/apk/debug/challeng-zup.apk
